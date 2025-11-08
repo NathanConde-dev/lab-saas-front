@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, Suspense } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -13,6 +13,7 @@ import { Button } from '@/components/ui/button'
 import { api } from '@/lib/api'
 import { formatCurrency, formatCardNumber, formatExpiryDate } from '@/lib/utils'
 import { useToast } from '@/hooks/use-toast'
+import { Loader2 } from 'lucide-react'
 
 const PLAN_AMOUNT = 154.80
 
@@ -25,7 +26,7 @@ const cardSchema = z.object({
 
 type CardFormData = z.infer<typeof cardSchema>
 
-export default function CheckoutCartaoPage() {
+function CheckoutCartaoContent() {
   const searchParams = useSearchParams()
   const router = useRouter()
   const { toast } = useToast()
@@ -258,3 +259,14 @@ export default function CheckoutCartaoPage() {
   )
 }
 
+export default function CheckoutCartaoPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-gray-600" />
+      </div>
+    }>
+      <CheckoutCartaoContent />
+    </Suspense>
+  )
+}

@@ -1,13 +1,13 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, Suspense } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
 import { CheckoutHeader } from '@/components/checkout/CheckoutHeader'
 import { CheckoutSummary } from '@/components/checkout/CheckoutSummary'
 import { Button } from '@/components/ui/button'
 import { api } from '@/lib/api'
 import { formatCurrency } from '@/lib/utils'
-import { QRCodeSVG } from 'react-qr-code'
+import QRCodeSVG from 'react-qr-code'
 import { Loader2, Copy, Check } from 'lucide-react'
 import { differenceInSeconds, addMinutes } from 'date-fns'
 import { useToast } from '@/hooks/use-toast'
@@ -17,7 +17,7 @@ const PIX_DISCOUNT_PERCENTAGE = 0.15
 const PIX_DISCOUNT = PLAN_AMOUNT * PIX_DISCOUNT_PERCENTAGE
 const FINAL_AMOUNT = PLAN_AMOUNT - PIX_DISCOUNT
 
-export default function CheckoutPixPage() {
+function CheckoutPixContent() {
   const searchParams = useSearchParams()
   const router = useRouter()
   const { toast } = useToast()
@@ -273,3 +273,14 @@ export default function CheckoutPixPage() {
   )
 }
 
+export default function CheckoutPixPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-gray-600" />
+      </div>
+    }>
+      <CheckoutPixContent />
+    </Suspense>
+  )
+}
